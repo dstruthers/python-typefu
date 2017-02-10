@@ -26,9 +26,9 @@ __version__ = '1.0.0'
 
 __all__ = ['derived', 'Mimic']
 
-class DerivationFactory(object):
+class DerivedClassFactory(object):
     def __init__(self):
-        """Return new DerivationFactory instance."""        
+        """Return new DerivedClassFactory instance."""        
         self.types = {}
 
     def __call__(self, type_):
@@ -494,12 +494,12 @@ class DerivationFactory(object):
         Derived.__name__ = 'Derived' + type_.__name__.capitalize()
         return Derived
 
-_derived_types = DerivationFactory()
+_derived_types = DerivedClassFactory()
 
 def derived(cls):
     return _derived_types(cls)
 
-class Mimic(object):
+    class Mimic(object):
     """The Mimic class takes on the properties of its argument."""
     def __new__(cls, value, *args, **kwargs):
         AdHocMimic = type(cls.__name__, (type(value), cls), {})
