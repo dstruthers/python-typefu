@@ -24,11 +24,11 @@
 __author__ = 'Darren M. Struthers <dstruthers@gmail.com>'
 __version__ = '1.0.0'
 
-__all__ = ['wrapped', 'Mimic']
+__all__ = ['derived', 'Mimic']
 
-class WrapperFactory(object):
+class DerivationFactory(object):
     def __init__(self):
-        """Return new WrapperFactory instance."""        
+        """Return new DerivationFactory instance."""        
         self.types = {}
 
     def __call__(self, type_):
@@ -36,7 +36,7 @@ class WrapperFactory(object):
             return self.types[type_]
         except KeyError:
             try:
-                self.types[type_] = self.wrap(type_)
+                self.types[type_] = self.derive(type_)
                 return self.types[type_]
             except NameError:
                 raise
@@ -46,43 +46,43 @@ class WrapperFactory(object):
             return self.types[attr]
         except KeyError:
             try:
-                self.types[attr] = self.wrap(eval(attr))
+                self.types[attr] = self.derive(eval(attr))
                 return self.types[attr]
             except NameError:
                 raise
 
     @staticmethod
-    def wrap(type_):
-        class Wrapped(object):
+    def derive(type_):
+        class Derived(object):
             def __init__(self, *args, **kwargs):
                 self.value = type_(*args, **kwargs)
 
-            def _convert(self, value):
+            def _coerce(self, value):
                 if type(value) == type_:
                     try:
-                        mimic = self.__class__(value)
-                        if mimic == value:
-                            return mimic
+                        coerced = self.__class__(value)
+                        if coerced == value:
+                            return coerced
                     except: pass
                 return value
 
             if hasattr(type_, '__abs__'):
                 def __abs__(self):
-                    return self._convert(abs(self.value))
+                    return self._coerce(abs(self.value))
 
             if hasattr(type_, '__add__'):
                 def __add__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value + other.value)
                     else:
-                        return self._convert(self.value + other)
+                        return self._coerce(self.value + other)
 
             if hasattr(type_, '__and__'):
                 def __and__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value & other.value)
                     else:
-                        return self._convert(self.value & other)
+                        return self._coerce(self.value & other)
 
             if hasattr(type_, '__coerce__'):
                 def __coerce__(self, other):
@@ -123,21 +123,21 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(divmod(self.value, other.value))
                     else:
-                        return self._convert(divmod(self.value, other))
+                        return self._coerce(divmod(self.value, other))
 
             if hasattr(type_, '__div__'):
                 def __div__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value / other.value)
                     else:
-                        return self._convert(self.value / other)
+                        return self._coerce(self.value / other)
 
             if hasattr(type_, '__eq__'):
                 def __eq__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value == other.value)
                     else:
-                        return self._convert(self.value == other)
+                        return self._coerce(self.value == other)
 
             if hasattr(type_, '__float__'):
                 def __float__(self):
@@ -148,25 +148,25 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value // other.value)
                     else:
-                        return self._convert(self.value // other)
+                        return self._coerce(self.value // other)
 
             if hasattr(type_, '__ge__'):
                 def __ge__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value >= other.value)
                     else:
-                        return self._convert(self.value >= other)
+                        return self._coerce(self.value >= other)
 
             if hasattr(type_, '__getitem__'):
                 def __getitem__(self, index):
-                    return self._convert(self.value[index])
+                    return self._coerce(self.value[index])
 
             if hasattr(type_, '__gt__'):
                 def __gt__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value > other.value)
                     else:
-                        return self._convert(self.value > other)
+                        return self._coerce(self.value > other)
 
             if hasattr(type_, '__hex__'):
                 def __hex__(self):
@@ -223,7 +223,7 @@ class WrapperFactory(object):
 
             if hasattr(type_, '__index__'):
                 def __index__(self):
-                    return self._convert(self.value.__index__())
+                    return self._coerce(self.value.__index__())
 
             if hasattr(type_, '__int__'):
                 def __int__(self):
@@ -294,11 +294,11 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value <= other.value)
                     else:
-                        return self._convert(self.value <= other)
+                        return self._coerce(self.value <= other)
                 
             if hasattr(type_, '__len__'):
                 def __len__(self):
-                    return self._convert(len(self.value))
+                    return self._coerce(len(self.value))
 
             if hasattr(type_, '__long__'):
                 def __long__(self):
@@ -309,39 +309,39 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value << other.value)
                     else:
-                        return self._convert(self.value << other)
+                        return self._coerce(self.value << other)
                 
             if hasattr(type_, '__lt__'):
                 def __lt__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value < other.value)
                     else:
-                        return self._convert(self.value < other)
+                        return self._coerce(self.value < other)
                 
             if hasattr(type_, '__mod__'):
                 def __mod__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value % other.value)
                     else:
-                        return self._convert(self.value % other)
+                        return self._coerce(self.value % other)
                 
             if hasattr(type_, '__mul__'):
                 def __mul__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value * other.value)
                     else:
-                        return self._convert(self.value * other)
+                        return self._coerce(self.value * other)
                 
             if hasattr(type_, '__ne__'):
                 def __ne__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value != other.value)
                     else:
-                        return self._convert(self.value != other)
+                        return self._coerce(self.value != other)
 
             if hasattr(type_, '__neg__'):
                 def __neg__(self):
-                    return self._convert(-self.value)
+                    return self._coerce(-self.value)
 
             if hasattr(type_, '__nonzero__'):
                 def __nonzero__(self):
@@ -356,11 +356,11 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value | other.value)
                     else:
-                        return self._convert(self.value | other)
+                        return self._coerce(self.value | other)
 
             if hasattr(type_, '__pos__'):
                 def __pos__(self):
-                    return self._convert(+self.value)
+                    return self._coerce(+self.value)
 
             if hasattr(type_, '__pow__'):
                 def __pow__(self, power, modulo=None):
@@ -375,21 +375,21 @@ class WrapperFactory(object):
                         m = modulo
                     
                     if m:
-                        return self._convert(pow(self.value, p, m))
+                        return self._coerce(pow(self.value, p, m))
                     else:
-                        return self._convert(self.value ** p)
+                        return self._coerce(self.value ** p)
                 
             if hasattr(type_, '__radd__'):
                 def __radd__(self, other):
-                    return self._convert(other + self.value)
+                    return self._coerce(other + self.value)
 
             if hasattr(type_, '__rand__'):
                 def __rand__(self, other):
-                    return self._convert(other & self.value)
+                    return self._coerce(other & self.value)
 
             if hasattr(type_, '__rdiv__'):
                 def __rdiv__(self, other):
-                    return self._convert(other / self.value)
+                    return self._coerce(other / self.value)
 
             if hasattr(type_, '__repr__'):
                 def __repr__(self):
@@ -401,51 +401,51 @@ class WrapperFactory(object):
 
             if hasattr(type_, '__rdivmod__'):
                 def __rdivmod__(self, other):
-                    return self._convert(divmod(other, self.value))
+                    return self._coerce(divmod(other, self.value))
 
             if hasattr(type_, '__rfloordiv__'):
                 def __rfloordiv__(self, other):
-                    return self._convert(other // self.value)
+                    return self._coerce(other // self.value)
 
             if hasattr(type_, '__rlshift__'):
                 def __rlshift__(self, other):
-                    return self._convert(other << self.value)
+                    return self._coerce(other << self.value)
 
             if hasattr(type_, '__rmod__'):
                 def __rmod__(self, other):
-                    return self._convert(other % self.value)
+                    return self._coerce(other % self.value)
 
             if hasattr(type_, '__rmul__'):
                 def __rmul__(self, other):
-                    return self._convert(other * self.value)
+                    return self._coerce(other * self.value)
 
             if hasattr(type_, '__ror__'):
                 def __ror__(self, other):
-                    return self._convert(other | self.value)
+                    return self._coerce(other | self.value)
                 
             if hasattr(type_, '__rpow__'):
                 def __rpow__(self, other):
-                    return self._convert(other ** self.value)
+                    return self._coerce(other ** self.value)
                 
             if hasattr(type_, '__rrshift__'):
                 def __rrshift__(self, other):
-                    return self._convert(other >> self.value)
+                    return self._coerce(other >> self.value)
                 
             if hasattr(type_, '__rshift__'):
                 def __rshift__(self, other):
-                    return self._convert(self.value >> other)
+                    return self._coerce(self.value >> other)
 
             if hasattr(type_, '__rsub__'):
                 def __rsub__(self, other):
-                    return self._convert(other - self.value)
+                    return self._coerce(other - self.value)
 
             if hasattr(type_, '__rtruediv__'):
                 def __rtruediv__(self, other):
-                    return self._convert(other / self.value)
+                    return self._coerce(other / self.value)
 
             if hasattr(type_, '__rxor__'):
                 def __rxor__(self, other):
-                    return self._convert(other ^ self.value)
+                    return self._coerce(other ^ self.value)
 
             if hasattr(type_, '__setitem__'):
                 def __setitem__(self, key, value):
@@ -461,14 +461,14 @@ class WrapperFactory(object):
 
             if hasattr(type_, '__sub__'):
                 def __sub__(self, other):
-                    return self._convert(self.value - other)
+                    return self._coerce(self.value - other)
                 
             if hasattr(type_, '__truediv__'):
                 def __truediv__(self, other):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value / other.value)
                     else:
-                        return self._convert(self.value / other)
+                        return self._coerce(self.value / other)
 
             if hasattr(type_, '__unicode__'):
                 def __unicode__(self):
@@ -479,25 +479,25 @@ class WrapperFactory(object):
                     if isinstance(other, self.__class__):
                         return self.__class__(self.value ^ other.value)
                     else:
-                        return self._convert(self.value ^ other)
+                        return self._coerce(self.value ^ other)
 
             def __getattr__(self, attr):
                 if hasattr(self.value, attr):
                     if callable(getattr(self.value, attr)):
                         def method_wrapper(*args, **kwargs):
-                            return self._convert(getattr(self.value, attr)(*args, **kwargs))
+                            return self._coerce(getattr(self.value, attr)(*args, **kwargs))
                         return method_wrapper
                     else:
                         return getattr(self.value, attr)
                 else:
                     raise AttributeError('"{}" object has no attribute "{}"'.format(self.__class__.__name__, attr))
-        Wrapped.__name__ = 'Wrapped_' + type_.__name__
-        return Wrapped
+        Derived.__name__ = 'Derived' + type_.__name__.capitalize()
+        return Derived
 
-_wrapped_types = WrapperFactory()
+_derived_types = DerivationFactory()
 
-def wrapped(cls):
-    return _wrapped_types(cls)
+def derived(cls):
+    return _derived_types(cls)
 
 class Mimic(object):
     """The Mimic class takes on the properties of its argument."""
