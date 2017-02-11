@@ -16,7 +16,7 @@ Derived types, for lack of a standardized or better term,  provide behavior
 that is similar to class inheritance, albeit with some key deviations. Most
 notably, if a derived type's inherited method returns a value of the base
 class's type, the derived type's method will attempt to cast the value to
-in instance of the derived type, rather than leave it as an instance of the
+an instance of the derived type, rather than leave it as an instance of the
 base class.
 
 The following example illustrates this distinction:
@@ -31,7 +31,7 @@ The following example illustrates this distinction:
 >>> foo.upper()
 'FOO'
 >>> type(foo.upper())
-<type 'str'>
+<class 'str'>
 >>> bar = MyStr2('bar')
 >>> bar.upper()
 'BAR'
@@ -57,7 +57,7 @@ Continuing from the above example, consider situations like this:
 <class '__main__.MyStr'>
 >>>foo += 'baz'
 >>> type(foo)
-<type 'str'>
+<class 'str'>
 ```
 The fallback to the base class might be harmless in some cases, but problematic
 in others. It's not difficult to imagine the inherited class containing
@@ -84,7 +84,7 @@ To access the underlying value, use the `value` property.
 >>> bar.value
 'barbaz'
 >>> type(bar.value)
-<type 'str'>
+<class 'str'>
 ```
 
 ## Mimic Type
