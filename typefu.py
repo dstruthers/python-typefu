@@ -499,8 +499,8 @@ _derived_types = DerivedClassFactory()
 def derived(cls):
     return _derived_types(cls)
 
-    class Mimic(object):
-        """The Mimic class takes on the properties of its argument."""
-        def __new__(cls, value, *args, **kwargs):
-            AdHocMimic = type(cls.__name__, (type(value), cls), {})
-            return AdHocMimic.__new__(AdHocMimic, value)
+class Mimic(object):
+    """The Mimic class takes on the properties of its argument."""
+    def __new__(cls, value, *args, **kwargs):
+        AdHocMimic = type(cls.__name__, (type(value), cls), {})
+        return AdHocMimic.__new__(AdHocMimic, value)
